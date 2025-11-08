@@ -1,0 +1,133 @@
+.section {
+  width: 100%;
+  background-color: var(--background);
+  padding: 5rem 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+.container {
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 4rem;
+}
+
+.title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  word-wrap: break-word;
+}
+
+.titleHighlight {
+  color: var(--primary);
+}
+
+.description {
+  color: var(--muted-foreground);
+  margin-top: 1rem;
+  font-size: 1.125rem;
+}
+
+.categorySection {
+  margin-bottom: 4rem;
+}
+
+.categoryTitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.carCard {
+  position: relative;
+  cursor: pointer;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  transition: all 300ms ease;
+  background-color: var(--card);
+}
+
+.carCard:hover {
+  border-color: var(--primary);
+}
+
+.imageWrapper {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+}
+
+.imageWrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 300ms ease;
+}
+
+.carCard:hover .imageWrapper img {
+  transform: scale(1.1);
+}
+
+.imageOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(var(--rgb-background), 1), transparent);
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.carCard:hover .imageOverlay {
+  opacity: 1;
+}
+
+.carInfo {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  transform: translateY(100%);
+  transition: transform 300ms ease;
+}
+
+.carCard:hover .carInfo {
+  transform: translateY(0);
+}
+
+.carName {
+  font-weight: 700;
+  font-size: 1.125rem;
+}
+
+.carBrand {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+}
+
+.carPower {
+  color: var(--primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
