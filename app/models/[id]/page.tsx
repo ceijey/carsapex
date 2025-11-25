@@ -1,34 +1,108 @@
-"use client"
-
 import Header from "@/components/header"
 import Footer from "@/components/footer"
-import { useState } from "react"
 import { cars } from "@/lib/cars-data"
 import Link from "next/link"
 import { ChevronLeft } from "lucide-react"
+import { notFound } from "next/navigation"
+import type { Metadata } from "next"
+import { siteConfig, generateCarStructuredData, generateBreadcrumbStructuredData } from "@/lib/seo-config"
 
-export default function ModelDetailPage({ params }: { params: { id: string } }) {
-  const [isScrolled, setIsScrolled] = useState(false)
-  const car = cars.find((c) => c.id === Number.parseInt(params.id))
+// Generate static params for all car IDs (SSG)
+export async function generateStaticParams() {
+  return cars.map((car) => ({
+    id: car.id.toString(),
+  }))
+}
+
+// Generate metadata for each car page
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}): Promise<Metadata> {
+  const { id } = await params
+  const car = cars.find((c) => c.id === Number.parseInt(id))
 
   if (!car) {
-    return (
-      <div className="min-h-screen bg-background text-foreground flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold mb-4">Model Not Found</h1>
-          <Link href="/models">
-            <button className="px-6 py-3 bg-primary text-primary-foreground rounded-sm font-medium hover:bg-primary/90">
-              Back to Models
-            </button>
-          </Link>
-        </div>
-      </div>
-    )
+    return {
+      title: "Model Not Found",
+    }
   }
+
+  const title = `${car.year} ${car.brand} ${car.name}`
+  const description = `Explore the ${car.year} ${car.brand} ${car.name}, a premium ${car.category.toLowerCase()} vehicle. Features ${car.specs.Engine} with ${car.specs.Power}, ${car.specs.Acceleration}. View full specifications and reserve your test drive today.`
+
+  return {
+    title,
+    description,
+    keywords: [
+      car.brand,
+      car.name,
+      car.category,
+      "luxury car",
+      "premium vehicle",
+      car.year.toString(),
+      ...Object.values(car.specs),
+    ],
+    openGraph: {
+      title,
+      description,
+      type: "website",
+      url: `${siteConfig.url}/models/${car.id}`,
+      images: [
+        {
+          url: car.image || "/placeholder.svg",
+          width: 1200,
+          height: 630,
+          alt: `${car.year} ${car.brand} ${car.name}`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [car.image || "/placeholder.svg"],
+    },
+    alternates: {
+      canonical: `${siteConfig.url}/models/${car.id}`,
+    },
+  }
+}
+
+// Enable ISR - revalidate every 24 hours
+export const revalidate = 86400
+
+// This page uses SSG with ISR (Incremental Static Regeneration)
+export default async function ModelDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const car = cars.find((c) => c.id === Number.parseInt(id))
+
+  if (!car) {
+    notFound()
+  }
+
+  // Generate structured data for SEO
+  const carStructuredData = generateCarStructuredData(car)
+  const breadcrumbData = generateBreadcrumbStructuredData([
+    { name: "Home", url: "/" },
+    { name: "Models", url: "/models" },
+    { name: `${car.brand} ${car.name}`, url: `/models/${car.id}` },
+  ])
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Header isScrolled={isScrolled} />
+      {/* Structured Data for SEO */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(carStructuredData) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
+      />
+      
+      <Header />
 
       <main className="pt-20 pb-20">
         {/* Back Button */}

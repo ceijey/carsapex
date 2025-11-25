@@ -1,11 +1,28 @@
+"use client"
+
 import Link from "next/link"
+import { useEffect, useState } from "react"
 import styles from "./header.module.css"
 
 interface HeaderProps {
-  isScrolled: boolean
+  isScrolled?: boolean
 }
 
-export default function Header({ isScrolled }: HeaderProps) {
+export default function Header({ isScrolled: isScrolledProp }: HeaderProps) {
+  const [isScrolled, setIsScrolled] = useState(isScrolledProp ?? false)
+
+  useEffect(() => {
+    if (isScrolledProp !== undefined) return // Use prop if provided
+
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50)
+    }
+
+    handleScroll() // Check initial state
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [isScrolledProp])
+
   return (
     <header className={`${styles.header} ${isScrolled ? styles.headerScrolled : ""}`}>
       <nav className={styles.nav}>

@@ -2,11 +2,16 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useState, lazy, Suspense } from "react"
 import Link from "next/link"
 import Header from "@/components/header"
-import Footer from "@/components/footer"
 import { ChevronLeft } from "lucide-react"
+
+// Lazy load footer component
+const Footer = lazy(() => import("@/components/footer"))
+
+// Note: metadata export not supported in client components
+// SEO handled by layout.tsx and meta tags
 
 export default function ReservePage() {
   const [formData, setFormData] = useState({
@@ -214,7 +219,9 @@ export default function ReservePage() {
           </div>
         </section>
       </main>
-      <Footer />
+      <Suspense fallback={<div className="h-20" />}>
+        <Footer />
+      </Suspense>
     </>
   )
 }

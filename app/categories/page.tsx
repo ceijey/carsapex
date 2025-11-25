@@ -1,13 +1,48 @@
-"use client"
-
 import Header from "@/components/header"
 import Footer from "@/components/footer"
-import { useState } from "react"
 import Link from "next/link"
 import { cars } from "@/lib/cars-data"
+import type { Metadata } from "next"
+import { siteConfig, generateBreadcrumbStructuredData } from "@/lib/seo-config"
 
+const title = "Browse by Category - Sports, Luxury, Electric & Performance Cars"
+const description = "Discover our entire collection organized by vehicle type. Explore sports cars, luxury sedans, electric vehicles, performance SUVs, and compact cars. Each category offers unique advantages tailored to different lifestyles."
+
+export const metadata: Metadata = {
+  title,
+  description,
+  keywords: [
+    "car categories",
+    "sports cars",
+    "luxury sedans",
+    "electric vehicles",
+    "performance SUVs",
+    "compact cars",
+    "vehicle types",
+  ],
+  openGraph: {
+    title,
+    description,
+    url: `${siteConfig.url}/categories`,
+    type: "website",
+    images: [siteConfig.ogImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+  },
+  alternates: {
+    canonical: `${siteConfig.url}/categories`,
+  },
+}
+
+// This page uses SSG (Static Site Generation)
 export default function CategoriesPage() {
-  const [isScrolled, setIsScrolled] = useState(false)
+  const breadcrumbData = generateBreadcrumbStructuredData([
+    { name: "Home", url: "/" },
+    { name: "Categories", url: "/categories" },
+  ])
 
   // Get unique categories
   const categories = Array.from(new Set(cars.map((car) => car.category)))
@@ -20,7 +55,12 @@ export default function CategoriesPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Header isScrolled={isScrolled} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
+      />
+      
+      <Header />
 
       <main className="pt-32 pb-20">
         <section className="max-w-7xl mx-auto px-6 mb-20">

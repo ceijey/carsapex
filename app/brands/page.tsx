@@ -1,13 +1,46 @@
-"use client"
-
 import Header from "@/components/header"
 import Footer from "@/components/footer"
-import { useState } from "react"
 import Link from "next/link"
 import { cars } from "@/lib/cars-data"
+import type { Metadata } from "next"
+import { siteConfig, generateBreadcrumbStructuredData } from "@/lib/seo-config"
 
+const title = "Premium Brands - Explore 10 Luxury Automotive Brands"
+const description = "Discover the 10 exclusive automotive brands at APEX Motors that define luxury, performance, and innovation. From exotic sports cars to premium electric vehicles."
+
+export const metadata: Metadata = {
+  title,
+  description,
+  keywords: [
+    "luxury car brands",
+    "premium automotive brands",
+    "exotic car brands",
+    "high-end car manufacturers",
+    "performance car brands",
+  ],
+  openGraph: {
+    title,
+    description,
+    url: `${siteConfig.url}/brands`,
+    type: "website",
+    images: [siteConfig.ogImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+  },
+  alternates: {
+    canonical: `${siteConfig.url}/brands`,
+  },
+}
+
+// This page uses SSG (Static Site Generation)
 export default function BrandsPage() {
-  const [isScrolled, setIsScrolled] = useState(false)
+  const breadcrumbData = generateBreadcrumbStructuredData([
+    { name: "Home", url: "/" },
+    { name: "Brands", url: "/brands" },
+  ])
 
   // Get unique brands
   const brands = Array.from(new Set(cars.map((car) => car.brand)))
@@ -20,7 +53,12 @@ export default function BrandsPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Header isScrolled={isScrolled} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
+      />
+      
+      <Header />
 
       <main className="pt-32 pb-20">
         <section className="max-w-7xl mx-auto px-6 mb-20">

@@ -1,17 +1,80 @@
-"use client"
-
 import Header from "@/components/header"
 import Footer from "@/components/footer"
-import { useState } from "react"
 import Link from "next/link"
 import { ChevronRight } from "lucide-react"
+import type { Metadata } from "next"
+import { siteConfig, generateBreadcrumbStructuredData } from "@/lib/seo-config"
 
+const title = "About APEX Motors - Pioneering Automotive Excellence Since 2020"
+const description = "Discover APEX Motors' mission to revolutionize the automotive industry through innovation, performance, and luxury craftsmanship. Learn about our 20+ models, 10 premium brands, and 50,000+ satisfied customers."
+
+export const metadata: Metadata = {
+  title,
+  description,
+  keywords: [
+    "about APEX Motors",
+    "automotive excellence",
+    "luxury car dealership",
+    "premium vehicles",
+    "car company history",
+  ],
+  openGraph: {
+    title,
+    description,
+    url: `${siteConfig.url}/about`,
+    type: "website",
+    images: [siteConfig.ogImage],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+  },
+  alternates: {
+    canonical: `${siteConfig.url}/about`,
+  },
+}
+
+// This page uses SSG (Static Site Generation)
 export default function AboutPage() {
-  const [isScrolled, setIsScrolled] = useState(false)
+  const breadcrumbData = generateBreadcrumbStructuredData([
+    { name: "Home", url: "/" },
+    { name: "About", url: "/about" },
+  ])
+
+  const organizationData = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: siteConfig.name,
+    url: siteConfig.url,
+    logo: `${siteConfig.url}/logo.png`,
+    description: siteConfig.description,
+    foundingDate: "2020",
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: siteConfig.contact.phone,
+      contactType: "Customer Service",
+      email: siteConfig.contact.email,
+    },
+    sameAs: [
+      siteConfig.social.facebook,
+      siteConfig.social.instagram,
+      siteConfig.social.youtube,
+    ],
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Header isScrolled={isScrolled} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationData) }}
+      />
+      
+      <Header />
 
       <main className="pt-32 pb-20">
         {/* Hero Section */}
